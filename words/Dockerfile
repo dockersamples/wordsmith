@@ -1,5 +1,5 @@
 # BUILD
-FROM openjdk:8u131-jdk-alpine as build
+FROM openjdk:8u171-jdk-alpine as build
 
 RUN MAVEN_VERSION=3.5.0 \
  && cd /usr/share \
@@ -16,13 +16,10 @@ COPY src ./src
 RUN mvn verify
 
 # RUN
-FROM alpine:3.7
-ENV LANG C.UTF-8
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
-ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
-RUN apk add --no-cache openjdk8-jre="8.161.12-r0" && rm usr/lib/libgif.so.7.0.0 usr/lib/libtasn1.so.6.5.5
+FROM openjdk:8u171-jre-alpine
 
-ENTRYPOINT ["java", "-Xmx8m", "-Xms8m", "-jar", "./target/words.jar"]
+ENTRYPOINT ["java", "-Xmx8m", "-Xms8m", "-jar", "/app/words.jar"]
 EXPOSE 8080
 
-COPY --from=build /home/lab/target ./target/
+WORKDIR /app
+COPY --from=build /home/lab/target .
