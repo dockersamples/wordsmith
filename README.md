@@ -10,7 +10,7 @@ The demo app runs across three containers:
 
 - [web](web/Dockerfile) - a Go web application which calls the API and builds words into sentences:
 
-![The Wordsmith app running in Kubernetes on Docker for Mac](img/dockercon_EU_17.jpg)
+![The Wordsmith app running in Kubernetes on Docker for Mac](img/dockercon-barcelona-logo.svg)
 
 ## Build
 
