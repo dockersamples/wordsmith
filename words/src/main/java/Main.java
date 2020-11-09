@@ -14,9 +14,9 @@ public class Main {
         Class.forName("org.postgresql.Driver");
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        server.createContext("/noun", handler(Suppliers.memoize(() -> randomWord("nouns"))));
-        server.createContext("/verb", handler(Suppliers.memoize(() -> randomWord("verbs"))));
-        server.createContext("/adjective", handler(Suppliers.memoize(() -> randomWord("adjectives"))));
+        server.createContext("/noun", handler(() -> randomWord("nouns")));
+        server.createContext("/verb", handler(() -> randomWord("verbs")));
+        server.createContext("/adjective", handler(() -> randomWord("adjectives")));
         server.start();
     }
 
