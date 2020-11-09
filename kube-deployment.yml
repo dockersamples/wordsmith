@@ -13,13 +13,16 @@ spec:
     app: words-db
   clusterIP: None
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
   labels:
     app: words-db
 spec:
+  selector:
+    matchLabels:
+      app: words-db
   template:
     metadata:
       labels:
@@ -47,7 +50,7 @@ spec:
     app: words-api
   clusterIP: None
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: words
@@ -55,6 +58,9 @@ metadata:
     app: words-api
 spec:
   replicas: 5
+  selector:
+    matchLabels:
+      app: words-api
   template:
     metadata:
       labels:
@@ -82,13 +88,16 @@ spec:
     app: words-web
   type: LoadBalancer
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web
   labels:
     app: words-web
 spec:
+  selector:
+    matchLabels:
+      app: words-web
   template:
     metadata:
       labels:
