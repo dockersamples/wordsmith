@@ -42,7 +42,11 @@ public class Main {
             byte[] bytes = response.getBytes(Charsets.UTF_8);
 
             System.out.println(response);
+            
             t.getResponseHeaders().add("content-type", "application/json; charset=utf-8");
+            t.getResponseHeaders().add("cache-control", "private, no-cache, no-store, must-revalidate, max-age=0");
+            t.getResponseHeaders().add("pragma", "no-cache");
+
             t.sendResponseHeaders(200, bytes.length);
 
             try (OutputStream os = t.getResponseBody()) {
