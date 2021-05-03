@@ -14,9 +14,9 @@ public class Main {
         Class.forName("org.postgresql.Driver");
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        server.createContext("/noun", handler(Suppliers.memoize(() -> randomWord("nouns"))));
-        server.createContext("/verb", handler(Suppliers.memoize(() -> randomWord("verbs"))));
-        server.createContext("/adjective", handler(Suppliers.memoize(() -> randomWord("adjectives"))));
+        server.createContext("/noun", handler(() -> randomWord("nouns")));
+        server.createContext("/verb", handler(() -> randomWord("verbs")));
+        server.createContext("/adjective", handler(() -> randomWord("adjectives")));
         server.start();
     }
 
@@ -42,7 +42,11 @@ public class Main {
             byte[] bytes = response.getBytes(Charsets.UTF_8);
 
             System.out.println(response);
+            
             t.getResponseHeaders().add("content-type", "application/json; charset=utf-8");
+            t.getResponseHeaders().add("cache-control", "private, no-cache, no-store, must-revalidate, max-age=0");
+            t.getResponseHeaders().add("pragma", "no-cache");
+
             t.sendResponseHeaders(200, bytes.length);
 
             try (OutputStream os = t.getResponseBody()) {
