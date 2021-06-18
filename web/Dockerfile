@@ -1,11 +1,11 @@
 # BUILD
-FROM golang:1.9.1-alpine3.6 as builder
+FROM golang:alpine as builder
 
 COPY dispatcher.go .
 RUN go build dispatcher.go
 
 # RUN
-FROM alpine:edge
+FROM alpine
 
 EXPOSE 80
 CMD ["/dispatcher"]
