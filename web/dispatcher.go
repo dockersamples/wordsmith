@@ -54,6 +54,11 @@ func copy(url, ip string, w http.ResponseWriter) error {
 		return err
 	}
 
+	for header, values := range resp.Header {
+		for _, value := range values {
+			w.Header().Add(header, value)
+		}
+	}
 	w.Header().Set("source", ip)
 
 	buf, err := ioutil.ReadAll(resp.Body)

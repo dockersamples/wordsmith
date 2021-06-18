@@ -9,22 +9,26 @@ lab.controller('LabCtrl', function ($scope, $http, $timeout) {
   $scope.adjective2 = "";
   $scope.verb = "";
 
-  getWord($http, $timeout, '/words/noun', function(resp) {
-    $scope.noun1 = word(resp);
+  getWord($http, $timeout, '/words/noun?n=1', function(resp1) {
+    $scope.noun1 = word(resp1);
   });
-  getWord($http, $timeout, '/words/noun', function(resp) {
-    $scope.noun2 = word(resp);
-  });
-  getWord($http, $timeout, '/words/adjective', function(resp) {
+
+  getWord($http, $timeout, '/words/adjective?a=1', function(resp) {
     var adj = word(resp);
     adj.word = adj.word.charAt(0).toUpperCase() + adj.word.substr(1)
     $scope.adjective1 = adj;
   });
-  getWord($http, $timeout, '/words/adjective', function(resp) {
-    $scope.adjective2 = word(resp);
-  });
+
   getWord($http, $timeout, '/words/verb', function(resp) {
     $scope.verb = word(resp);
+  });
+
+  getWord($http, $timeout, '/words/noun?n=2', function(resp2) {
+    $scope.noun2 = word(resp2);
+  });
+
+  getWord($http, $timeout, '/words/adjective?n=2', function(resp) {
+    $scope.adjective2 = word(resp);
   });
 });
 
