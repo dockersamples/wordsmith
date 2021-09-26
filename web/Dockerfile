@@ -10,5 +10,6 @@ FROM alpine
 EXPOSE 80
 CMD ["/dispatcher"]
 
+# Copy /go/dispatcher to /
 COPY --from=builder /go/dispatcher /
 COPY static /static/
