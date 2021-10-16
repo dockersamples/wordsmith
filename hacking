@@ -1,0 +1,35 @@
+
+  
+ db -> ClusterIP
+  ports:
+    port: 5432  on webserver
+    targetPort: 5432  on container
+  clusterIP: None
+
+ words-api -> ClusterIP
+  ports:
+    port: 8080
+    targetPort: 8080
+  clusterIP: None
+
+ web -> LoadBalancer
+ ports:
+  - port: 8081 on service
+    targetPort: 80 on container
+  type: LoadBalancer generate in range
+
+
+    10.100.125.77 8081/31451
+
+
+
+     [ web ]
+
+    nodePort
+   31453 ------ port 8081 ------  pod 80
+   
+   port 8081 <----> nodePort 31343 ---> 80
+   external
+
+
+    Endpoint: 192.168.14.228:80 <- the actual pod
