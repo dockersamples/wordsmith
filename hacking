@@ -1,4 +1,3 @@
-
   
  db -> ClusterIP
   ports:
