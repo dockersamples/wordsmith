@@ -6,7 +6,7 @@ WORKDIR /home/lab
 COPY pom.xml .
 RUN mvn verify -DskipTests --fail-never
 
-COPY api/src ./src
+COPY src ./src
 RUN mvn verify
 
 # RUN
