@@ -11,4 +11,4 @@ EXPOSE 80
 CMD ["/dispatcher"]
 
 COPY --from=builder /go/dispatcher /
-COPY static /static/
+COPY web/static /static/
