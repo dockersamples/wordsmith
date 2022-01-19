@@ -31,7 +31,7 @@ spec:
       containers:
       - name: db
         image: dockersamples/k8s-wordsmith-db
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
         ports:
         - containerPort: 5432
           name: db
@@ -70,7 +70,7 @@ spec:
       containers:
       - name: words
         image: dockersamples/k8s-wordsmith-api
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
           name: api
@@ -108,7 +108,7 @@ spec:
       containers:
       - name: web
         image: dockersamples/k8s-wordsmith-web
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
         ports:
         - containerPort: 80
           name: words-web
