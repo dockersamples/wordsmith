@@ -30,20 +30,21 @@ steps:
   perform_cfdemoweb_unit_test:
     title: "[TEST | UNIT] stantonmitchell/cfdemo-web"
     image: golang:alpine
+    fail_fast: false
     working_directory: ${{main_clone}}
     description: Performing unit tests against stantonmitchell/cfdemo-web...
     commands:
       - gofmt ./web/dispatcher.go
     on_success:
-      metadata: 
-        set: 
-          - ${{build_cfdemoweb_image.imageId}}: 
-            - unit_tests: passed
+      annotations: 
+          set:
+            - annotations:
+              - unit_tests: passed
     on_failure:
-      metadata: 
-        set: 
-          - ${{build_cfdemoweb_image.imageId}}: 
-            - unit_tests: failed
+        annotations: 
+          set:
+            - annotations:
+              - unit_tests: failed
   
   # IMAGE BUILDING
 
@@ -56,6 +57,9 @@ steps:
     dockerfile: web/Dockerfile
     image_name: stantonmitchell/cfdemo-web
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+    metadata:
+      set:
+        - unit_tests: ${{perform_cfdemoweb_unit_test.unit_tests}}
 
   ## Build 'stantonmitchell/cfdemo-db' image
   build_cfdemodb_image:
