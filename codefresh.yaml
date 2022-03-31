@@ -127,7 +127,7 @@ steps:
     arguments:
       action: push
       helm_version: 0.1.0
-      chart_name: cfdemo/k8s-wordsmith
+      chart_name: charts/k8s-wordsmith
       kube_context: GCP
 
   ## Deploy Application
@@ -138,8 +138,8 @@ steps:
     working_directory: ${{main_clone}}
     arguments:
       action: install
-      chart_name: cfdemo/k8s-wordsmith
-      release_name: my-go-chart-prod
+      chart_name: charts/k8s-wordsmith
+      release_name: k8s-wordsmith
       helm_version: 0.1.0
       kube_context: GCP
       custom_values:
