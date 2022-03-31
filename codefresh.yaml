@@ -54,6 +54,7 @@ steps:
     type: build
     description: Building the (stantonmitchell/cfdemo-web) image...
     disable_push: true
+    working_directory: ${{main_clone}}/web
     dockerfile: web/Dockerfile
     image_name: stantonmitchell/cfdemo-web
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
@@ -67,6 +68,7 @@ steps:
     type: build
     description: Building the (stantonmitchell/cfdemo-db) image...
     disable_push: true
+    working_directory: ${{main_clone}}/db
     dockerfile: db/Dockerfile
     image_name: stantonmitchell/cfdemo-db
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
@@ -77,6 +79,7 @@ steps:
     type: build
     description: Building the (stantonmitchell/cfdemo-words) image...
     disable_push: true
+    working_directory: ${{main_clone}}/words
     dockerfile: words/Dockerfile
     image_name: stantonmitchell/cfdemo-words
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
