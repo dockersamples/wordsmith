@@ -1,0 +1,185 @@
+version: '1.0'
+
+stages:
+  - "perform_cfdemoweb_unit_test" # Performs a simple unit test against ./web/dispatcher.go
+  - "build_cfdemoweb_image" # Builds the web image @ ./web/Dockerfile
+  - "build_cfdemodb_image" # Builds the db image @ ./db/Dockerfile
+  - "build_cfdemowords_image" # Builds the words image @ ./words/Dockerfile
+  - "push_cfdemoweb_image" # Pushes the web image
+  - "push_cfdemodb_image" # Pushes the db image
+  - "push_cfdemowords_image" # Pushes the words image
+  - "deploy_cfdemoweb_image" # Deploys the web image
+  - "deploy_cfdemodb_image" # Deploys the db image
+  - "deploy_cfdemowords_image" # Deploys the words image
+  - "integration_clone" # Clones the K8 playground repo to use the ./cfdemo/curlOnly-manifest.yaml
+  - "integration_deploy" # Deploys a cURL pod to perform integration test
+  - "integration_cleanup" # Cleansup the cURL pod
+
+steps:
+
+  # UNIT TEST
+  perform_cfdemoweb_unit_test:
+    title: "[TEST | UNIT] stantonmitchell/cfdemo-web"
+    image: golang:alpine
+    working_directory: ${{main_clone}}
+    description: Performing unit tests against stantonmitchell/cfdemo-web...
+    commands:
+      - gofmt ./web/dispatcher.go
+    on_success:
+      metadata: 
+        set: 
+          - ${{build_cfdemoweb_image.imageId}}: 
+            - unit_tests: passed
+    on_failure:
+      metadata: 
+        set: 
+          - ${{build_cfdemoweb_image.imageId}}: 
+            - unit_tests: failed
+  
+  # IMAGE BUILDING
+
+  ## Build 'stantonmitchell/cfdemo-web' image
+  build_cfdemoweb_image:
+    title: "[BUILD] stantonmitchell/cfdemo-web"
+    type: build
+    description: Building the (stantonmitchell/cfdemo-web) image...
+    disable_push: true
+    dockerfile: web/Dockerfile
+    image_name: stantonmitchell/cfdemo-web
+    tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+
+  ## Build 'stantonmitchell/cfdemo-db' image
+  build_cfdemodb_image:
+    title: "[BUILD] stantonmitchell/cfdemo-db"
+    type: build
+    description: Building the (stantonmitchell/cfdemo-db) image...
+    disable_push: true
+    dockerfile: db/Dockerfile
+    image_name: stantonmitchell/cfdemo-db
+    tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+
+  ## Build 'stantonmitchell/cfdemo-words' image
+  build_cfdemowords_image:
+    title: "[BUILD] stantonmitchell/cfdemo-words"
+    type: build
+    description: Building the (stantonmitchell/cfdemo-words) image...
+    disable_push: true
+    dockerfile: words/Dockerfile
+    image_name: stantonmitchell/cfdemo-words
+    tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+
+  # IMAGE PUSHING
+
+  ## Push 'stantonmitchell/cfdemo-db' image
+  push_cfdemodb_image:
+    title: "[PUSH] stantonmitchell/cfdemo-db"
+    type: push
+    description: Pushing the (stantonmitchell/cfdemo-db) image...
+    registry: Dockerhub
+    candidate: ${{build_cfdemodb_image}}
+    image_name: stantonmitchell/cfdemo-db
+    tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+
+  ## Push 'stantonmitchell/cfdemo-web' image
+  push_cfdemoweb_image:
+    title: "[PUSH] stantonmitchell/cfdemo-web"
+    type: push
+    description: Pushing the (stantonmitchell/cfdemo-web) image...
+    registry: Dockerhub
+    candidate: ${{build_cfdemoweb_image}}
+    image_name: stantonmitchell/cfdemo-web
+    tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+  
+  ## Push 'stantonmitchell/cfdemo-words' image
+  push_cfdemowords_image:
+    title: "[PUSH] stantonmitchell/cfdemo-words"
+    type: push
+    description: Pushing the (stantonmitchell/cfdemo-words) image...
+    registry: Dockerhub
+    candidate: ${{build_cfdemowords_image}}
+    image_name: stantonmitchell/cfdemo-words
+    tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+
+  # APPLICATION DEPLOYMENT
+
+  ## Deploy Web application
+  deploy_cfdemoweb_image:
+    title: "[DEPLOY] stantonmitchell/cfdemo-web"
+    type: deploy
+    kind: kubernetes 
+    cluster: GCP
+    service: web
+    candidate: 
+      image: ${{build_cfdemoweb_image}}
+      registry: Dockerhub
+    namespace: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+    description: Deploying the (stantonmitchell/cfdemo-web) image...
+    registry: Dockerhub
+
+  ## Deploy DB application  
+  deploy_cfdemodb_image:
+    title: "[DEPLOY] stantonmitchell/cfdemo-db"
+    type: deploy
+    kind: kubernetes 
+    cluster: GCP
+    service: db
+    candidate: 
+      image: ${{build_cfdemodb_image}}
+      registry: Dockerhub
+    namespace: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+    description: Deploying the (stantonmitchell/cfdemo-db) image...
+    registry: Dockerhub
+
+  ## Deploy Words application
+  deploy_cfdemowords_image:
+    title: "[DEPLOY] stantonmitchell/cfdemo-words"
+    type: deploy
+    kind: kubernetes 
+    cluster: GCP
+    service: words
+    candidate: 
+      image: ${{build_cfdemowords_image}}
+      registry: Dockerhub
+    namespace: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
+    description: Deploying the (stantonmitchell/cfdemo-words) image...
+    registry: Dockerhub
+
+  # INTEGRATION TESTING
+
+  ## Clone K8 Playground Repo
+  integration_clone:
+    type: git-clone
+    title: Repo clone
+    description: 'Cloning cURL repository'
+    repo: stantonmitchell/k8playground
+    revision: main
+    git: github
+    fail_fast: true
+
+   ## Deploy cURL and Test
+  integration_deploy:
+    title: "Running integration test"
+    type: "freestyle"
+    fail_fast: false
+    image: "bitnami/kubectl:1.21"
+    working_directory: '${{integration_clone}}'
+    commands:
+      - "kubectl config use-context GCP"
+      - "export DASH=`echo '-'`; export SETBRANCH=`echo $CF_BRANCH$DASH$CF_SHORT_REVISION`"
+      - "kubectl create ns $SETBRANCH"
+      - "kubectl apply -f cfdemo/manifest.yaml -n $SETBRANCH"
+      - "echo 'Sleeping for 10s'; sleep 10s"
+      - 'SETBRANCH="$SETBRANCH"; kubectl exec deploy/curl-deployment -n $SETBRANCH -- curl nginx.$SETBRANCH.svc.cluster.local:8081 -w "%{http_code}" -s -o /dev/null'
+      - 'echo "$SETBRANCH" > branchnameTMP.txt'
+
+   ## Cleanup test
+  integration_cleanup:
+      title: "Cleaning up integration test"
+      type: "freestyle"
+      image: "bitnami/kubectl:1.21"
+      working_directory: '${{integration_clone}}'
+      commands:
+        - "kubectl config use-context GCP"
+        - "export SETBRANCH=`cat branchnameTMP.txt`"
+        - "kubectl delete ns $SETBRANCH"
+        - "rm -rf branchnameTMP.txt"
