@@ -2,9 +2,20 @@ version: '1.0'
 
 stages:
 
+  - "main_clone" # Cloned repository
   - "helm_store" # Stores the Helm chart for the primary application
   - "helm_deploy" # Deploys the primary application using Helm
 steps:
+
+  # CLONE PRIMARY REPOSITORY
+  main_clone:
+    type: git-clone
+    title: '[CLONE] Primary repository'
+    description: 'Cloning primary repository'
+    repo: stantonmitchell/k8s-wordsmith-demo
+    revision: ${{CF_BRANCH}}
+    git: github
+    fail_fast: true
 
   # HELM
 
