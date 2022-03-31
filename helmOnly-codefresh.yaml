@@ -4,6 +4,8 @@ stages:
 
   - "main_clone" # Cloned repository
   - "helm_store" # Stores the Helm chart for the primary application
+  - "helm_approval" # Pauses for approval to deploy
+  - "namespace_create" # Creates Namespace
   - "helm_deploy" # Deploys the primary application using Helm
 steps:
 
@@ -42,6 +44,19 @@ steps:
       duration: 2
       finalState: terminated
       timeUnit: minutes
+
+  # CREATE NAMESPACE
+  namespace_create:
+    title: "[NAMESPACE] Create namespace: 'cfdemo-${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'"
+    type: "freestyle"
+    fail_fast: true
+    image: "bitnami/kubectl:1.21"
+    working_directory: '${{main_clone}}'
+    commands:
+      - "kubectl config use-context GCP"
+      - "export DASH=`echo '-'`; export SETBRANCH=`echo cfdemo$DASH$CF_BRANCH$DASH$CF_SHORT_REVISION`"
+      - "kubectl create ns $SETBRANCH"
+      - "kubectl get ns"
 
   ## Deploy Application
   helm_deploy:

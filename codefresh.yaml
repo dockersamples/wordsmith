@@ -8,6 +8,7 @@ stages:
   - "push_cfdemoweb_image" # Pushes the web image
   - "push_cfdemodb_image" # Pushes the db image
   - "push_cfdemowords_image" # Pushes the words image
+  - "namespace_create" # Creates Namespace
   - "helm_store" # Stores the Helm chart for the primary application
   - "helm_deploy" # Deploys the primary application using Helm
   - "integration_clone" # Clones the K8 playground repo to use the ./cfdemo/curlOnly-manifest.yaml
@@ -106,6 +107,19 @@ steps:
     image_name: vo1d/cfdemo-words
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
 
+  # CREATE NAMESPACE
+  namespace_create:
+    title: "[NAMESPACE] Create namespace: 'cfdemo-${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'"
+    type: "freestyle"
+    fail_fast: true
+    image: "bitnami/kubectl:1.21"
+    working_directory: '${{main_clone}}'
+    commands:
+      - "kubectl config use-context GCP"
+      - "export DASH=`echo '-'`; export SETBRANCH=`echo cfdemo$DASH$CF_BRANCH$DASH$CF_SHORT_REVISION`"
+      - "kubectl create ns $SETBRANCH"
+      - "kubectl get ns"
+
   # HELM
 
   ## Store Helm chart
@@ -161,7 +175,6 @@ steps:
     commands:
       - "kubectl config use-context GCP"
       - "export DASH=`echo '-'`; export SETBRANCH=`echo cfdemo$DASH$CF_BRANCH$DASH$CF_SHORT_REVISION`"
-      - "kubectl create ns $SETBRANCH"
       - "kubectl apply -f cfdemo/manifest.yaml -n $SETBRANCH"
       - "echo 'Sleeping for 10s'; sleep 10s"
       - 'SETBRANCH="$SETBRANCH"; kubectl exec deploy/curl-deployment -n $SETBRANCH -- curl web.$SETBRANCH.svc.cluster.local:8081 -w "%{http_code}" -s -o /dev/null'
