@@ -30,21 +30,11 @@ steps:
   perform_cfdemoweb_unit_test:
     title: "[TEST | UNIT] vo1d/cfdemo-web"
     image: golang:alpine
-    fail_fast: false
+    fail_fast: true
     working_directory: ${{main_clone}}
     description: Performing unit tests against vo1d/cfdemo-web...
     commands:
       - gofmt ./web/dispatcher.go
-    on_success:
-      annotations: 
-          set:
-            - annotations:
-              - unit_tests: passed
-    on_failure:
-        annotations: 
-          set:
-            - annotations:
-              - unit_tests: failed
   
   # IMAGE BUILDING
 
@@ -60,7 +50,7 @@ steps:
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
     metadata:
       set:
-        - unit_tests: ${{perform_cfdemoweb_unit_test.unit_tests}}
+        - unit_tests: passed
 
   ## Build 'vo1d/cfdemo-db' image
   build_cfdemodb_image:
