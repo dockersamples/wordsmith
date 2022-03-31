@@ -55,6 +55,7 @@ steps:
       release_name: k8s-wordsmith
       helm_version: 3.0.2
       kube_context: GCP
+      namespace: 'cfdemo-${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
       custom_values:
         - 'web.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
         - 'db.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'

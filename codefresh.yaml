@@ -133,6 +133,7 @@ steps:
       release_name: k8s-wordsmith
       helm_version: 3.0.2
       kube_context: GCP
+      namespace: 'cfdemo-${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
       custom_values:
         - 'web.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
         - 'db.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
@@ -159,11 +160,11 @@ steps:
     working_directory: '${{integration_clone}}'
     commands:
       - "kubectl config use-context GCP"
-      - "export DASH=`echo '-'`; export SETBRANCH=`echo $CF_BRANCH$DASH$CF_SHORT_REVISION`"
+      - "export DASH=`echo '-'`; export SETBRANCH=`echo cfdemo$DASH$CF_BRANCH$DASH$CF_SHORT_REVISION`"
       - "kubectl create ns $SETBRANCH"
       - "kubectl apply -f cfdemo/manifest.yaml -n $SETBRANCH"
       - "echo 'Sleeping for 10s'; sleep 10s"
-      - 'SETBRANCH="$SETBRANCH"; kubectl exec deploy/curl-deployment -n $SETBRANCH -- curl nginx.$SETBRANCH.svc.cluster.local:8081 -w "%{http_code}" -s -o /dev/null'
+      - 'SETBRANCH="$SETBRANCH"; kubectl exec deploy/curl-deployment -n $SETBRANCH -- curl web.$SETBRANCH.svc.cluster.local:8081 -w "%{http_code}" -s -o /dev/null'
       - 'echo "$SETBRANCH" > branchnameTMP.txt'
 
    ## Cleanup test
