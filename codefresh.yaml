@@ -179,6 +179,16 @@ steps:
       - "echo 'Sleeping for 10s'; sleep 10s"
       - 'SETBRANCH="$SETBRANCH"; kubectl exec deploy/curl-deployment -n $SETBRANCH -- curl web.$SETBRANCH.svc.cluster.local:8081 -w "%{http_code}" -s -o /dev/null'
       - 'echo "$SETBRANCH" > branchnameTMP.txt'
+    on_success:
+      metadata:
+        set:
+          - ${{build_cfdemoweb_image.imageId}}:
+            - integration_tests: passed
+    on_failure:
+      metadata:
+        set:
+          - ${{build_cfdemoweb_image.imageId}}:
+            - integration_tests: failed
 
    ## Cleanup test
   integration_cleanup:
@@ -186,6 +196,7 @@ steps:
       type: "freestyle"
       image: "bitnami/kubectl:1.21"
       working_directory: '${{integration_clone}}'
+      fail_fast: true
       commands:
         - "kubectl config use-context GCP"
         - "export SETBRANCH=`cat branchnameTMP.txt`"
