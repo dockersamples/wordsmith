@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.words.name}}
+  labels:
+        app: {{.Values.words.name}}
+spec:
+  type: {{.Values.words.Servicetype }}
+  ports:
+    - port: {{ .Values.words.servicePort }}
+      targetPort: {{.Values.words.containerPort}}
+      protocol: TCP
+      name: {{.Values.words.name}}
+  selector:
+        app: {{.Values.words.name}}
+  clusterIP: None

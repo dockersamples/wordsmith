@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.words.name}}
+  labels:
+        app: {{.Values.words.name}}
+spec:
+  replicas: {{.Values.words.replicas }}
+  selector:
+    matchLabels:
+          app: {{.Values.words.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.words.name}}
+    spec:
+      containers:
+      - name: {{.Values.words.name}}
+        image: {{.Values.words.image}}
+        imagePullPolicy: {{.Values.words.pullPolicy }}
+        ports:
+        - containerPort: {{.Values.words.containerPort}}
+          name: {{.Values.words.containerName}}

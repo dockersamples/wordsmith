@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.db.name}}
+  labels:
+        app: {{.Values.db.name}}
+spec:
+  selector:
+    matchLabels:
+          app: {{.Values.db.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.db.name}}
+    spec:
+      containers:
+      - name: {{.Values.db.name}}
+        image: {{.Values.db.image}}
+        imagePullPolicy: {{ .Values.db.pullPolicy }}
+        ports:
+        - containerPort: {{.Values.db.containerPort}}
+          name: {{.Values.db.containerName}}

@@ -1,0 +1,39 @@
+
+# Values for 'web' service
+web:
+        image: stantonmitchell/cfdemo-web:latest
+        pullPolicy: IfNotPresent
+        name: web
+        labels: [
+                app: web
+        ]
+        Servicetype: LoadBalancer
+        servicePort: 8081
+        containerPort: 80
+        containerName: words-web
+        
+
+# Values for 'db' service
+db:
+        image: stantonmitchell/cfdemo-db:latest
+        pullPolicy: IfNotPresent
+        name: db
+        labels: [
+                app: db
+        ]
+        servicePort: 5432
+        containerPort: 5432
+        containerName: words-db
+
+# values for 'words' service
+words:
+        image: stantonmitchell/cfdemo-api:latest
+        pullPolicy: IfNotPresent
+        name: words
+        labels: [
+                app: words
+        ]
+        servicePort: 8080
+        containerPort: 8080
+        containerName: words-api
+
