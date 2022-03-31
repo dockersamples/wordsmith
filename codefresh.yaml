@@ -8,14 +8,23 @@ stages:
   - "push_cfdemoweb_image" # Pushes the web image
   - "push_cfdemodb_image" # Pushes the db image
   - "push_cfdemowords_image" # Pushes the words image
-  - "deploy_cfdemoweb_image" # Deploys the web image
-  - "deploy_cfdemodb_image" # Deploys the db image
-  - "deploy_cfdemowords_image" # Deploys the words image
+  - "helm_store" # Stores the Helm chart for the primary application
+  - "helm_deploy" # Deploys the primary application using Helm
   - "integration_clone" # Clones the K8 playground repo to use the ./cfdemo/curlOnly-manifest.yaml
   - "integration_deploy" # Deploys a cURL pod to perform integration test
   - "integration_cleanup" # Cleansup the cURL pod
 
 steps:
+
+  # CLONE PRIMARY REPOSITORY
+  main_clone:
+    type: git-clone
+    title: '[CLONE] Primary repository'
+    description: 'Cloning primary repository'
+    repo: stantonmitchell/k8s-wordsmith-demo
+    revision: ${{CF_BRANCH}}
+    git: github
+    fail_fast: true
 
   # UNIT TEST
   perform_cfdemoweb_unit_test:
@@ -100,56 +109,43 @@ steps:
     image_name: stantonmitchell/cfdemo-words
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
 
-  # APPLICATION DEPLOYMENT
+  # HELM
 
-  ## Deploy Web application
-  deploy_cfdemoweb_image:
-    title: "[DEPLOY] stantonmitchell/cfdemo-web"
-    type: deploy
-    kind: kubernetes 
-    cluster: GCP
-    service: web
-    candidate: 
-      image: ${{build_cfdemoweb_image}}
-      registry: Dockerhub
-    namespace: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
-    description: Deploying the (stantonmitchell/cfdemo-web) image...
-    registry: Dockerhub
+  ## Store Helm chart
+  helm_store:
+    title: '[HELM | STORE] Primary Application Chart'
+    description: 'Storing Helm chart for primary application'
+    type: helm
+    working_directory: ${{main_clone}}
+    arguments:
+      action: push
+      helm_version: 0.1.0
+      chart_name: cfdemo/k8s-wordsmith
+      kube_context: GCP
 
-  ## Deploy DB application  
-  deploy_cfdemodb_image:
-    title: "[DEPLOY] stantonmitchell/cfdemo-db"
-    type: deploy
-    kind: kubernetes 
-    cluster: GCP
-    service: db
-    candidate: 
-      image: ${{build_cfdemodb_image}}
-      registry: Dockerhub
-    namespace: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
-    description: Deploying the (stantonmitchell/cfdemo-db) image...
-    registry: Dockerhub
-
-  ## Deploy Words application
-  deploy_cfdemowords_image:
-    title: "[DEPLOY] stantonmitchell/cfdemo-words"
-    type: deploy
-    kind: kubernetes 
-    cluster: GCP
-    service: words
-    candidate: 
-      image: ${{build_cfdemowords_image}}
-      registry: Dockerhub
-    namespace: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
-    description: Deploying the (stantonmitchell/cfdemo-words) image...
-    registry: Dockerhub
+  ## Deploy Application
+  helm_deploy:
+    type: helm
+    title: '[HELM | DEPLOY] Deploy using Helm'
+    description: 'Deploy our primary application with Helm'
+    working_directory: ${{main_clone}}
+    arguments:
+      action: install
+      chart_name: cfdemo/k8s-wordsmith
+      release_name: my-go-chart-prod
+      helm_version: 0.1.0
+      kube_context: GCP
+      custom_values:
+        - 'web.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
+        - 'db.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
+        - 'words.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
 
   # INTEGRATION TESTING
 
   ## Clone K8 Playground Repo
   integration_clone:
     type: git-clone
-    title: Repo clone
+    title: '[CLONE] Playground Repository'
     description: 'Cloning cURL repository'
     repo: stantonmitchell/k8playground
     revision: main
@@ -158,7 +154,7 @@ steps:
 
    ## Deploy cURL and Test
   integration_deploy:
-    title: "Running integration test"
+    title: "[TEST | INTEGRATION] Deploying and running"
     type: "freestyle"
     fail_fast: false
     image: "bitnami/kubectl:1.21"
@@ -174,7 +170,7 @@ steps:
 
    ## Cleanup test
   integration_cleanup:
-      title: "Cleaning up integration test"
+      title: "[CLEANUP] Integration test"
       type: "freestyle"
       image: "bitnami/kubectl:1.21"
       working_directory: '${{integration_clone}}'
