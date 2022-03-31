@@ -1,7 +1,7 @@
 
 # Values for 'web' service
 web:
-        image: stantonmitchell/cfdemo-web
+        image: vo1d/cfdemo-web
         tag: latest
         pullPolicy: IfNotPresent
         name: web
@@ -16,7 +16,7 @@ web:
 
 # Values for 'db' service
 db:
-        image: stantonmitchell/cfdemo-db
+        image: vo1d/cfdemo-db
         tag: latest
         pullPolicy: IfNotPresent
         name: db
@@ -29,7 +29,7 @@ db:
 
 # values for 'words' service
 words:
-        image: stantonmitchell/cfdemo-words
+        image: vo1d/cfdemo-words
         tag: latest
         pullPolicy: IfNotPresent
         name: words

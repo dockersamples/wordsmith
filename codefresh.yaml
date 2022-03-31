@@ -28,11 +28,11 @@ steps:
 
   # UNIT TEST
   perform_cfdemoweb_unit_test:
-    title: "[TEST | UNIT] stantonmitchell/cfdemo-web"
+    title: "[TEST | UNIT] vo1d/cfdemo-web"
     image: golang:alpine
     fail_fast: false
     working_directory: ${{main_clone}}
-    description: Performing unit tests against stantonmitchell/cfdemo-web...
+    description: Performing unit tests against vo1d/cfdemo-web...
     commands:
       - gofmt ./web/dispatcher.go
     on_success:
@@ -48,72 +48,72 @@ steps:
   
   # IMAGE BUILDING
 
-  ## Build 'stantonmitchell/cfdemo-web' image
+  ## Build 'vo1d/cfdemo-web' image
   build_cfdemoweb_image:
-    title: "[BUILD] stantonmitchell/cfdemo-web"
+    title: "[BUILD] vo1d/cfdemo-web"
     type: build
-    description: Building the (stantonmitchell/cfdemo-web) image...
+    description: Building the (vo1d/cfdemo-web) image...
     disable_push: true
     working_directory: ${{main_clone}}/web
     dockerfile: ./Dockerfile
-    image_name: stantonmitchell/cfdemo-web
+    image_name: vo1d/cfdemo-web
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
     metadata:
       set:
         - unit_tests: ${{perform_cfdemoweb_unit_test.unit_tests}}
 
-  ## Build 'stantonmitchell/cfdemo-db' image
+  ## Build 'vo1d/cfdemo-db' image
   build_cfdemodb_image:
-    title: "[BUILD] stantonmitchell/cfdemo-db"
+    title: "[BUILD] vo1d/cfdemo-db"
     type: build
-    description: Building the (stantonmitchell/cfdemo-db) image...
+    description: Building the (vo1d/cfdemo-db) image...
     disable_push: true
     working_directory: ${{main_clone}}/db
     dockerfile: ./Dockerfile
-    image_name: stantonmitchell/cfdemo-db
+    image_name: vo1d/cfdemo-db
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
 
-  ## Build 'stantonmitchell/cfdemo-words' image
+  ## Build 'vo1d/cfdemo-words' image
   build_cfdemowords_image:
-    title: "[BUILD] stantonmitchell/cfdemo-words"
+    title: "[BUILD] vo1d/cfdemo-words"
     type: build
-    description: Building the (stantonmitchell/cfdemo-words) image...
+    description: Building the (vo1d/cfdemo-words) image...
     disable_push: true
     working_directory: ${{main_clone}}/words
     dockerfile: ./Dockerfile
-    image_name: stantonmitchell/cfdemo-words
+    image_name: vo1d/cfdemo-words
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
 
   # IMAGE PUSHING
 
-  ## Push 'stantonmitchell/cfdemo-db' image
+  ## Push 'vo1d/cfdemo-db' image
   push_cfdemodb_image:
-    title: "[PUSH] stantonmitchell/cfdemo-db"
+    title: "[PUSH] vo1d/cfdemo-db"
     type: push
-    description: Pushing the (stantonmitchell/cfdemo-db) image...
+    description: Pushing the (vo1d/cfdemo-db) image...
     registry: Dockerhub
     candidate: ${{build_cfdemodb_image}}
-    image_name: stantonmitchell/cfdemo-db
+    image_name: vo1d/cfdemo-db
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
 
-  ## Push 'stantonmitchell/cfdemo-web' image
+  ## Push 'vo1d/cfdemo-web' image
   push_cfdemoweb_image:
-    title: "[PUSH] stantonmitchell/cfdemo-web"
+    title: "[PUSH] vo1d/cfdemo-web"
     type: push
-    description: Pushing the (stantonmitchell/cfdemo-web) image...
+    description: Pushing the (vo1d/cfdemo-web) image...
     registry: Dockerhub
     candidate: ${{build_cfdemoweb_image}}
-    image_name: stantonmitchell/cfdemo-web
+    image_name: vo1d/cfdemo-web
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
   
-  ## Push 'stantonmitchell/cfdemo-words' image
+  ## Push 'vo1d/cfdemo-words' image
   push_cfdemowords_image:
-    title: "[PUSH] stantonmitchell/cfdemo-words"
+    title: "[PUSH] vo1d/cfdemo-words"
     type: push
-    description: Pushing the (stantonmitchell/cfdemo-words) image...
+    description: Pushing the (vo1d/cfdemo-words) image...
     registry: Dockerhub
     candidate: ${{build_cfdemowords_image}}
-    image_name: stantonmitchell/cfdemo-words
+    image_name: vo1d/cfdemo-words
     tag: ${{CF_BRANCH}}-${{CF_SHORT_REVISION}}
 
   # HELM
