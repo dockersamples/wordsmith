@@ -24,7 +24,7 @@ steps:
 
   helm_approval:
     type: pending-approval
-    title: [HELM | APPROVE]
+    title: '[HELM | APPROVE] Primary Application Chart'
     description: Wait for approval to deploy
     timeout:
       duration: 2
