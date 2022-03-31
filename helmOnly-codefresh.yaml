@@ -27,7 +27,7 @@ steps:
     working_directory: ${{main_clone}}
     arguments:
       action: push
-      helm_version: 3.6.3
+      helm_version: 3.0.2
       chart_name: charts/k8s-wordsmith
       kube_context: GCP
 
@@ -52,7 +52,7 @@ steps:
       action: install
       chart_name: charts/k8s-wordsmith
       release_name: k8s-wordsmith
-      helm_version: 3.6.3
+      helm_version: 3.0.2
       kube_context: GCP
       custom_values:
         - 'web.tag=${{CF_BRANCH}}-${{CF_SHORT_REVISION}}'
