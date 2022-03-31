@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: {{.Values.db.name}}
-        image: {{.Values.db.image}}
+        image: "{{.Values.db.image}}:{{.Values.db.tag}}"
         imagePullPolicy: {{ .Values.db.pullPolicy }}
         ports:
         - containerPort: {{.Values.db.containerPort}}

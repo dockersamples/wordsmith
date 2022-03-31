@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: {{.Values.web.name}}
-        image: {{.Values.web.image}}
+        image: "{{.Values.web.image}}:{{.Values.web.tag}}"
         imagePullPolicy: {{ .Values.web.pullPolicy }}
         ports:
         - containerPort: {{.Values.web.containerPort}}

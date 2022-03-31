@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: {{.Values.words.name}}
-        image: {{.Values.words.image}}
+        image: "{{.Values.words.image}}:{{.Values.words.tag}}"
         imagePullPolicy: {{.Values.words.pullPolicy }}
         ports:
         - containerPort: {{.Values.words.containerPort}}
