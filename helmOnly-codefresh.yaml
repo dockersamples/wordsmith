@@ -27,6 +27,7 @@ steps:
     working_directory: ${{main_clone}}
     arguments:
       action: push
+      chart_repo_url: 'cm://h.cfcr.io/cyber76/cfdemo'
       helm_version: 3.0.2
       chart_name: charts/k8s-wordsmith
       kube_context: GCP
