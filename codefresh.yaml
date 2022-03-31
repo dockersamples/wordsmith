@@ -175,7 +175,7 @@ steps:
     commands:
       - "kubectl config use-context GCP"
       - "export DASH=`echo '-'`; export SETBRANCH=`echo cfdemo$DASH$CF_BRANCH$DASH$CF_SHORT_REVISION`"
-      - "kubectl apply -f cfdemo/manifest.yaml -n $SETBRANCH"
+      - "kubectl apply -f cfdemo/curlOnly-manifest.yaml -n $SETBRANCH"
       - "echo 'Sleeping for 10s'; sleep 10s"
       - 'SETBRANCH="$SETBRANCH"; kubectl exec deploy/curl-deployment -n $SETBRANCH -- curl web.$SETBRANCH.svc.cluster.local:8081 -w "%{http_code}" -s -o /dev/null'
       - 'echo "$SETBRANCH" > branchnameTMP.txt'
