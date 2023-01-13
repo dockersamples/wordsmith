@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    app: words-web
+spec:
+  ports:
+    - port: 8080
+      targetPort: 80
+      name: web
+  selector:
+    app: words-web
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: words-web
+spec:
+  selector:
+    matchLabels:
+      app: words-web
+  template:
+    metadata:
+      labels:
+        app: words-web
+    spec:
+      containers:
+        - name: web
+          image: dockersamples/wordsmith-web
+          ports:
+            - containerPort: 80
+              name: words-web
