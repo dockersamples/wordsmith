@@ -74,7 +74,7 @@ jobs:
       
       ### platforms to build for, defaults to linux/amd64
       ### other options: linux/amd64,linux/arm64,linux/arm/v7
-      platforms: linux/amd64,linux/arm64,linux/arm/v7
+      platforms: linux/amd64,linux/arm64
       
       ### Create a PR comment with image tags and labels
       ### defaults to false
