@@ -3,14 +3,14 @@ kind: Service
 metadata:
   name: db
   labels:
-    app: words-db
+    app: db
 spec:
   ports:
     - port: 5432
       targetPort: 5432
       name: db
   selector:
-    app: words-db
+    app: db
   clusterIP: None
 ---
 apiVersion: apps/v1
@@ -18,22 +18,25 @@ kind: Deployment
 metadata:
   name: db
   labels:
-    app: words-db
+    app: db
 spec:
   selector:
     matchLabels:
-      app: words-db
+      app: db
   template:
     metadata:
       labels:
-        app: words-db
+        app: db
     spec:
       containers:
         - name: db
-          image: postgres:10.0-alpine
+          image: postgres:15
           ports:
             - containerPort: 5432
               name: db
+          env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: trust
           volumeMounts:
             - name: db-schema
               mountPath: /docker-entrypoint-initdb.d

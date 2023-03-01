@@ -3,14 +3,14 @@ kind: Service
 metadata:
   name: web
   labels:
-    app: words-web
+    app: web
 spec:
   ports:
     - port: 8080
       targetPort: 80
       name: web
   selector:
-    app: words-web
+    app: web
   type: LoadBalancer
 ---
 apiVersion: apps/v1
@@ -18,19 +18,19 @@ kind: Deployment
 metadata:
   name: web
   labels:
-    app: words-web
+    app: web
 spec:
   selector:
     matchLabels:
-      app: words-web
+      app: web
   template:
     metadata:
       labels:
-        app: words-web
+        app: web
     spec:
       containers:
         - name: web
           image: dockersamples/wordsmith-web
           ports:
             - containerPort: 80
-              name: words-web
+              name: web
