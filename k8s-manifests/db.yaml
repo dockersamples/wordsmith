@@ -30,13 +30,10 @@ spec:
     spec:
       containers:
         - name: db
-          image: postgres:15
+          image: postgres:10.0-alpine
           ports:
             - containerPort: 5432
               name: db
-          env:
-            - name: POSTGRES_HOST_AUTH_METHOD
-              value: trust
           volumeMounts:
             - name: db-schema
               mountPath: /docker-entrypoint-initdb.d

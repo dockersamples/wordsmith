@@ -3,10 +3,7 @@ version: '3.9'
 
 services:
   db:
-    image: postgres:15
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
-    # mount startup script to populate the database
+    image: postgres:10.0-alpine
     volumes:
       - ./db:/docker-entrypoint-initdb.d/
 
