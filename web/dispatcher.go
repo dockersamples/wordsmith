@@ -13,7 +13,7 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	fwd := &forwarder{"words", 8080}
+	fwd := &forwarder{"api", 8080}
 	http.Handle("/words/", http.StripPrefix("/words", fwd))
 	http.Handle("/", http.FileServer(http.Dir("static")))
 

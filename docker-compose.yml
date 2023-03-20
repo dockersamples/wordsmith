@@ -1,4 +1,5 @@
-version: '3.3'
+version: '3.9'
+# we'll keep the version for now to work in Compose and Swarm
 
 services:
   db:
@@ -6,8 +7,8 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d/
 
-  words:
-    build: words
+  api:
+    build: api
     image: dockersamples/wordsmith-api
     deploy:
       replicas: 5
