@@ -20,8 +20,6 @@ The only requirement to build and run the app from source is Docker. Clone this 
 docker compose up --build
 ```
 
-Or you can pull pre-built images from Docker Hub using `docker compose pull`.
-
 
 ## Deploy using Kubernetes manifests
 

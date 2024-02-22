@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: dockersamples/wordsmith-api
+          image: rajivnix/wordsmith-api
           ports:
             - containerPort: 8080
               name: api

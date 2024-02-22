@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: dockersamples/wordsmith-web
+          image: rajivnix/wordsmith-web
           ports:
             - containerPort: 80
               name: web

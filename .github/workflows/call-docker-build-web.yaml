@@ -1,5 +1,5 @@
 name: Build Web
-# template source: https://github.com/dockersamples/.github/blob/main/templates/call-docker-build.yaml
+# template source: https://github.com/rajivnix/.github/blob/main/templates/call-docker-build.yaml
 
 on:
   # we want pull requests so we can build(test) but not push to image registry
@@ -23,7 +23,7 @@ jobs:
 
     name: Web Call Docker Build
 
-    uses: dockersamples/.github/.github/workflows/reusable-docker-build.yaml@main
+    uses: rajivnix/.github/.github/workflows/reusable-docker-build.yaml@main
 
     permissions:
       contents: read
@@ -51,9 +51,9 @@ jobs:
       ### A list of the account/repo names for docker build. List should match what's enabled above
       ### defaults to:
       image-names: |
-        ghcr.io/dockersamples/wordsmith-web
-        dockersamples/wordsmith-web
-        dockersamples/k8s-wordsmith-web
+        ghcr.io/rajivnix/wordsmith-web
+        rajivnix/wordsmith-web
+        rajivnix/k8s-wordsmith-web
       
       ### REQUIRED set rules for tagging images, based on special action syntax:
       ### https://github.com/docker/metadata-action#tags-input

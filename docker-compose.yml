@@ -9,12 +9,12 @@ services:
 
   api:
     build: api
-    image: dockersamples/wordsmith-api
+    image: rajivnix/wordsmith-api
     deploy:
       replicas: 5
 
   web:
     build: web
-    image: dockersamples/wordsmith-web
+    image: rajivnix/wordsmith-web
     ports:
      - "8080:80"
