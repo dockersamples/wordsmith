@@ -4,17 +4,20 @@ version: '3.9'
 services:
   db:
     image: postgres:10.0-alpine
+    platform: linux/amd64
     volumes:
       - ./db:/docker-entrypoint-initdb.d/
 
   api:
     build: api
     image: rajivnix/wordsmith-api
+    platform: linux/amd64
     deploy:
       replicas: 5
 
   web:
     build: web
     image: rajivnix/wordsmith-web
+    platform: linux/amd64
     ports:
      - "8080:80"
