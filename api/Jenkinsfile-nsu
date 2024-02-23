@@ -124,27 +124,27 @@ stages {
             }
         }
 
-        // stage("Update Manifest"){
-        //   steps {
-        //     container('yq'){
-        //       dir("api/k8s"){
-        //         sh "yq e -i '.images[0].newTag = \"${BUILD_NUMBER}\"' kustomization.yaml"
+        stage("Update Manifest"){
+          steps {
+            container('yq'){
+              dir("api/k8s"){
+                sh "yq e -i '.images[0].newTag = \"${BUILD_NUMBER}\"' kustomization.yaml"
  
-        //       sh "cat kustomization.yaml"
-        //       }
-        //     }
-        //   }
-        // }
-        // stage('Deploy Application') {
-        //     steps {
-        //         container("kubectl"){
-        //           sh "kubectl version"
-        //           dir("api/k8s"){
-        //             sh "ls -lthr"
-        //             sh 'kubectl apply -k .'
-        //           }
-        //         }
-        //     }
-        // }
+              sh "cat kustomization.yaml"
+              }
+            }
+          }
+        }
+        stage('Deploy Application') {
+            steps {
+                container("kubectl"){
+                  sh "kubectl version"
+                  dir("api/k8s"){
+                    sh "ls -lthr"
+                    sh 'kubectl apply -k .'
+                  }
+                }
+            }
+        }
 }
 }
