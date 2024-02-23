@@ -16,6 +16,6 @@ spec:
       - name: regcred
       containers:
       - name: web
-        image: rajivnix/wordsmith-web
+        image: devops.nrepositorydev.nus.edu.sg/wordsmith-web
         ports:
         - containerPort: 80
