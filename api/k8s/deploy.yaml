@@ -16,6 +16,6 @@ spec:
       - name: regcred
       containers:
       - name: api
-        image: rajivnix/wordsmith-api
+        image: devops.nrepositorydev.nus.edu.sg/wordsmith-api
         ports:
         - containerPort: 8080
