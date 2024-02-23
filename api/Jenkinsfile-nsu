@@ -27,9 +27,6 @@ agent {
               items:
               - key: .dockerconfigjson
                 path: config.json
-          - name: kaniko-cache
-            persistentVolumeClaim:
-              claimName: kaniko-cache
           - name: app-kubeconfig
             secret:
               secretName: app-kubeconfig
@@ -45,8 +42,6 @@ agent {
             volumeMounts:
             - name: kaniko-docker-config
               mountPath: /kaniko/.docker
-            - name: kaniko-cache # This should match the volume name defined in volumes section
-              mountPath: "/cache"
           - name: kubectl
             image: bitnami/kubectl
             command:
