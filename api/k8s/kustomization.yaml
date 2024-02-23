@@ -5,7 +5,7 @@ resources:
   - deploy.yaml
   - service.yaml
 images:
-  - name: rajivnix/wordsmith-api
+  - name: devops.nrepositorydev.nus.edu.sg/wordsmith-api
     newTag: "latest"
 generatorOptions:
   disableNameSuffixHash: true
