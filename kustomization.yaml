@@ -1,5 +1,5 @@
 resources:
-  - k8s-manifests/db.yaml
+  - db/db.yaml
 configMapGenerator:
   - name: db-schema
     files:
