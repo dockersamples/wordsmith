@@ -89,7 +89,7 @@ agent {
 
      causeString: 'Triggered on $ref and $changed_files',
 
-     token: 'kBE6moYtgdx97ueBxy6',
+     token: 'kBE6moYtgdx97ueBxy6a',
      tokenCredentialId: '',
 
      printContributedVariables: true,
@@ -101,7 +101,7 @@ agent {
      shouldNotFlatten: false,
 
      regexpFilterText: '$ref $changed_files',
-     regexpFilterExpression: 'refs/heads/main'
+     regexpFilterExpression: '(refs/heads/main)\\s.*"api/[^"]+?".*'
     )
   }
 

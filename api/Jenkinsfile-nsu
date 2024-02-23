@@ -5,10 +5,10 @@ pipeline {
       }
   environment { 
         DOCKER_BUILDKIT = '1'
-        DOCKER_REGISTRY = "rajivnix"
+        DOCKER_REGISTRY = "devops.nrepositorydev.nus.edu.sg"
     }
   parameters {
-        string(name: 'DOCKER_REG', defaultValue: 'rajivnix', description: 'Docker Registry URL')
+        string(name: 'DOCKER_REG', defaultValue: 'devops.nrepositorydev.nus.edu.sg', description: 'Docker Registry URL')
         string(name: 'ref', defaultValue: 'refs/heads/main', description: 'Branch Name')       
         string(name: 'clone_url', defaultValue: 'https://github.com/rajivreddy/wordsmith.git', description: 'HTTPS url')
     }
@@ -100,7 +100,7 @@ agent {
      shouldNotFlatten: false,
 
      regexpFilterText: '$ref $changed_files',
-     regexpFilterExpression: '(refs/heads/main)\\s.*"web/[^"]+?".*'
+     regexpFilterExpression: '(refs/heads/main)\\s.*"api/[^"]+?".*'
     )
   }
 
@@ -123,33 +123,33 @@ stages {
                 container('kaniko') {
                     // Use Kaniko executor image to build the Docker image
                     sh "ls -lthr"
-                    sh "/kaniko/executor --context=./web --dockerfile=./web/Dockerfile --destination=${DOCKER_REGISTRY}/wordsmith-web:$BUILD_NUMBER --skip-tls-verify --cache --cache-copy-layers"
+                    sh "/kaniko/executor --context=./api --dockerfile=./api/Dockerfile --destination=${DOCKER_REGISTRY}/wordsmith-api:$BUILD_NUMBER --skip-tls-verify --cache --cache-copy-layers"
                 }
 
             }
         }
 
-        stage("Update Manifest"){
-          steps {
-            container('yq'){
-              dir("web/k8s"){
-                sh "yq e -i '.images[0].newTag = \"${BUILD_NUMBER}\"' kustomization.yaml"
+        // stage("Update Manifest"){
+        //   steps {
+        //     container('yq'){
+        //       dir("api/k8s"){
+        //         sh "yq e -i '.images[0].newTag = \"${BUILD_NUMBER}\"' kustomization.yaml"
  
-              sh "cat kustomization.yaml"
-              }
-            }
-          }
-        }
-        stage('Deploy Application') {
-            steps {
-                container("kubectl"){
-                  sh "kubectl version"
-                  dir("web/k8s"){
-                    sh "ls -lthr"
-                    sh 'kubectl apply -k .'
-                  }
-                }
-            }
-        }
+        //       sh "cat kustomization.yaml"
+        //       }
+        //     }
+        //   }
+        // }
+        // stage('Deploy Application') {
+        //     steps {
+        //         container("kubectl"){
+        //           sh "kubectl version"
+        //           dir("api/k8s"){
+        //             sh "ls -lthr"
+        //             sh 'kubectl apply -k .'
+        //           }
+        //         }
+        //     }
+        // }
 }
 }

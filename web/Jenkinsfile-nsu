@@ -5,10 +5,10 @@ pipeline {
       }
   environment { 
         DOCKER_BUILDKIT = '1'
-        DOCKER_REGISTRY = "rajivnix"
+        DOCKER_REGISTRY = "devops.nrepositorydev.nus.edu.sg"
     }
   parameters {
-        string(name: 'DOCKER_REG', defaultValue: 'rajivnix', description: 'Docker Registry URL')
+        string(name: 'DOCKER_REG', defaultValue: 'devops.nrepositorydev.nus.edu.sg', description: 'Docker Registry URL')
         string(name: 'ref', defaultValue: 'refs/heads/main', description: 'Branch Name')       
         string(name: 'clone_url', defaultValue: 'https://github.com/rajivreddy/wordsmith.git', description: 'HTTPS url')
     }
