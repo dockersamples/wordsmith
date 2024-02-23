@@ -1,0 +1,8 @@
+resources:
+  - k8s-manifests/db.yaml
+configMapGenerator:
+  - name: db-schema
+    files:
+      - ./db/words.sql
+generatorOptions:
+  disableNameSuffixHash: true
