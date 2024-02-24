@@ -1,0 +1,155 @@
+pipeline {
+      options {
+        ansiColor('xterm')
+        timestamps () 
+      }
+  environment { 
+        DOCKER_BUILDKIT = '1'
+        DOCKER_REGISTRY = "devops.nrepositorydev.nus.edu.sg"
+    }
+  parameters {
+        string(name: 'DOCKER_REG', defaultValue: 'devops.nrepositorydev.nus.edu.sg', description: 'Docker Registry URL')
+        string(name: 'ref', defaultValue: 'refs/heads/main', description: 'Branch Name')       
+        string(name: 'clone_url', defaultValue: 'https://github.com/rajivreddy/wordsmith.git', description: 'HTTPS url')
+    }
+
+agent {
+    kubernetes {
+      //cloud 'kubernetes'
+      defaultContainer 'kaniko'
+      yaml '''
+        kind: Pod
+        spec:
+          volumes:
+          - name:  kaniko-docker-config
+            secret:
+              secretName: regcred
+              items:
+              - key: .dockerconfigjson
+                path: config.json
+          - name: kaniko-cache
+            persistentVolumeClaim:
+              claimName: kaniko-cache
+          - name: app-kubeconfig
+            secret:
+              secretName: app-kubeconfig
+              items:
+              - key: application-cluster
+                path: app-kubeconfig
+          containers:
+          - name: kaniko
+            image: gcr.io/kaniko-project/executor:debug
+            command:
+            - /busybox/cat
+            tty: true
+            volumeMounts:
+            - name: kaniko-docker-config
+              mountPath: /kaniko/.docker
+            - name: kaniko-cache # This should match the volume name defined in volumes section
+              mountPath: "/cache"
+          - name: kubectl
+            image: bitnami/kubectl
+            command:
+            - sleep
+            args:
+            - 99d
+            securityContext:
+              privileged: true
+              runAsUser: 0
+            env:
+            - name: KUBECONFIG
+              value: "/tmp/app-kubeconfig"
+            volumeMounts:
+            - name: app-kubeconfig
+              mountPath: /tmp
+          - name: yq
+            image: mikefarah/yq:latest
+            command:
+            - sleep
+            args:
+            - 99d
+            securityContext:
+              privileged: true
+              runAsUser: 0
+          
+'''
+    }
+  }
+
+
+  triggers {
+    GenericTrigger(
+     genericVariables: [
+      [key: 'ref', value: '$.ref'],
+      [key: 'clone_url', value: '$.repository.clone_url'],
+      [key: 'changed_files', value: '$.commits[*].[\'modified\',\'added\',\'removed\'][*]']
+
+     ],
+
+     causeString: 'Triggered on $ref and $changed_files',
+
+     token: 'kBE6moYtgdx97ueBxy6a',
+     tokenCredentialId: '',
+
+     printContributedVariables: true,
+     printPostContent: true,
+     allowSeveralTriggersPerBuild: true,
+
+     silentResponse: false,
+     
+     shouldNotFlatten: false,
+
+     regexpFilterText: '$ref $changed_files',
+     regexpFilterExpression: '(refs/heads/main)\\s.*"web/[^"]+?".*'
+    )
+  }
+
+
+stages {
+    stage("Clone"){
+        steps {
+            container('docker') {
+              script {
+                    env.BRANCH_NAME = params.ref.split('/')[-1]
+              }
+              git branch: "${BRANCH_NAME}", changelog: false, credentialsId: 'github-pat', poll: false, url: '${clone_url}'
+            }
+        }
+    }
+
+        stage('Build and Push Image') {
+            steps {
+
+                container('kaniko') {
+                    // Use Kaniko executor image to build the Docker image
+                    sh "ls -lthr"
+                    sh "/kaniko/executor --context=./web --dockerfile=./web/Dockerfile --destination=${DOCKER_REGISTRY}/wordsmith-web:$BUILD_NUMBER --skip-tls-verify --cache --cache-copy-layers"
+                }
+
+            }
+        }
+
+        stage("Update Manifest"){
+          steps {
+            container('yq'){
+              dir("web/k8s"){
+                sh "yq e -i '.images[0].newTag = \"${BUILD_NUMBER}\"' kustomization.yaml"
+ 
+              sh "cat kustomization.yaml"
+              }
+            }
+          }
+        }
+        stage('Deploy Application') {
+            steps {
+                container("kubectl"){
+                  sh "kubectl version"
+                  dir("web/k8s"){
+                    sh "ls -lthr"
+                    sh 'kubectl apply -k .'
+                  }
+                }
+            }
+        }
+}
+}

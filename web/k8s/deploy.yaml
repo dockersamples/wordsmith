@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: web
+        image: devops.nrepositorydev.nus.edu.sg/wordsmith-web
+        ports:
+        - containerPort: 80

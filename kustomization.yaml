@@ -1,7 +1,5 @@
 resources:
-  - k8s-manifests/api.yaml
-  - k8s-manifests/db.yaml
-  - k8s-manifests/web.yaml
+  - db/db.yaml
 configMapGenerator:
   - name: db-schema
     files:
